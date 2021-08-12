@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Matrix Visualization</title>      
+        <meta charset="utf-8">
+        <!-- Load d3.js -->
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <!-- Load color palettes -->
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+
+        <script type=text/javascript src="{{url_for('static', filename='matrixD3.js') }}"></script>
+        <script>
+        $(document).ready(function () {
+                var url = 'http://localhost';
+                var port = '5000';
+                var socket = io.connect(url + ':' + port);
+                socket.on('connect', function () {
+                    socket.emit('connect_event', { data: 'connected!' });
+                })
+
+                socket.on('server_response', function (msg) {
+                    $('#log').append('<br>' + $('<div/>').text('Received #' + ': ' + msg.data).html());
+                });
+
+                socket.on('cNewMatrix', function(data){
+                    console.log(data)
+                    newMatrix(data['array'],data['title'])
+                });
+            }); 
+        </script>
+    </head>
+    <body>
+        <h1>Hello, Felix!</h1>
+        <button onclick="newMatrix()">New Matrix</button>
+        <div id="placeholder"></div>
+        <div id="log"></div>
+    </body>
+</html>
